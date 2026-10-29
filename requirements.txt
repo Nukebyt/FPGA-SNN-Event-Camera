@@ -1,0 +1,8 @@
+numpy
+scipy
+opencv-python
+matplotlib
+pytest
+h5py
+torch
+tonic

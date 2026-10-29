@@ -1,0 +1,18 @@
+{
+  "in_hw": 32,
+  "in_ch": 2,
+  "c1": 16,
+  "c2": 32,
+  "c3": 0,
+  "classes": 6,
+  "leak_shift": 4,
+  "thr": [
+    64,
+    64,
+    64
+  ],
+  "vbits": 12,
+  "wscale": 16,
+  "bin_us": 33333,
+  "readout": "sum"
+}

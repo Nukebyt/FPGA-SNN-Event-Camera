@@ -1,0 +1,20 @@
+validation: 256 repetitions
+val  theta 0.10 ln  step           active input 0.124 | handclapping window 0.176 seq 0.148 (n=128 seqs) | handwaving window 0.420 seq 0.398 (n=128 seqs)
+val  theta 0.15 ln  step           active input 0.082 | handclapping window 0.199 seq 0.172 (n=128 seqs) | handwaving window 0.516 seq 0.516 (n=128 seqs)
+val  theta 0.20 ln  step           active input 0.062 | handclapping window 0.162 seq 0.133 (n=128 seqs) | handwaving window 0.577 seq 0.562 (n=128 seqs)
+val  theta 0.30 ln  step           active input 0.041 | handclapping window 0.103 seq 0.094 (n=128 seqs) | handwaving window 0.631 seq 0.648 (n=128 seqs)
+val  theta 0.40 ln  step           active input 0.032 | handclapping window 0.071 seq 0.031 (n=128 seqs) | handwaving window 0.637 seq 0.648 (n=128 seqs)
+val  theta 0.10 ln  reset          active input 0.117 | handclapping window 0.205 seq 0.180 (n=128 seqs) | handwaving window 0.397 seq 0.406 (n=128 seqs)
+val  theta 0.15 ln  reset          active input 0.076 | handclapping window 0.225 seq 0.203 (n=128 seqs) | handwaving window 0.474 seq 0.477 (n=128 seqs)
+val  theta 0.20 ln  reset          active input 0.056 | handclapping window 0.197 seq 0.172 (n=128 seqs) | handwaving window 0.532 seq 0.539 (n=128 seqs)
+val  theta 0.30 ln  reset          active input 0.036 | handclapping window 0.130 seq 0.086 (n=128 seqs) | handwaving window 0.609 seq 0.625 (n=128 seqs)
+val  theta 0.40 ln  reset          active input 0.029 | handclapping window 0.087 seq 0.070 (n=128 seqs) | handwaving window 0.634 seq 0.641 (n=128 seqs)
+best on validation: theta 0.30 ln, reset (mean window accuracy 0.370)
+test: 287 repetitions
+test  default 0.20 ln step         active input 0.062 | handclapping window 0.250 seq 0.217 (n=143 seqs) | handwaving window 0.518 seq 0.556 (n=144 seqs)
+test  chosen 0.30 ln reset         active input 0.036 | handclapping window 0.203 seq 0.231 (n=143 seqs) | handwaving window 0.529 seq 0.514 (n=144 seqs)
+  handclapping  per condition (window acc): d1 0.07  d2 0.32  d3 0.39  d4 0.03
+  handwaving    per condition (window acc): d1 0.68  d2 0.44  d3 0.65  d4 0.35
+  handclapping  predicted as: Lwave 0.39  clap* 0.20  other 0.18  drums 0.12  Rwave 0.07
+  handwaving    predicted as: Lwave* 0.46  clap 0.23  other 0.17  Rwave* 0.07  drums 0.04
+Track A reference on real DVS events: clap recall 0.80, right wave 0.98, left wave 0.94; active input fraction 0.166 (train)

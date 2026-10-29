@@ -1,0 +1,403 @@
+{
+ "frames_per_clip": 320,
+ "rows": [
+  {
+   "width": 854,
+   "stabilised": false,
+   "clips_correct": 2,
+   "clips": 4,
+   "windows": 40,
+   "windows_correct": 17,
+   "mean_events_pct": 1.3402605056762695,
+   "per_clip": {
+    "hand_clapping1": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 10
+     }
+    },
+    "hand_clapping2": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 8,
+      "boxing": 1,
+      "walking": 1
+     }
+    },
+    "hand_waving1": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 9,
+      "boxing": 1
+     }
+    },
+    "hand_waving2": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 8,
+      "walking": 2
+     }
+    }
+   }
+  },
+  {
+   "width": 854,
+   "stabilised": true,
+   "clips_correct": 1,
+   "clips": 4,
+   "windows": 40,
+   "windows_correct": 16,
+   "mean_events_pct": 0.3607940673828125,
+   "per_clip": {
+    "hand_clapping1": {
+     "answer": "hand waving",
+     "hist": {
+      "boxing": 2,
+      "hand waving": 8
+     }
+    },
+    "hand_clapping2": {
+     "answer": "boxing",
+     "hist": {
+      "boxing": 7,
+      "hand waving": 3
+     }
+    },
+    "hand_waving1": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 10
+     }
+    },
+    "hand_waving2": {
+     "answer": "boxing",
+     "hist": {
+      "boxing": 4,
+      "hand waving": 6
+     }
+    }
+   }
+  },
+  {
+   "width": 640,
+   "stabilised": false,
+   "clips_correct": 2,
+   "clips": 4,
+   "windows": 40,
+   "windows_correct": 14,
+   "mean_events_pct": 1.9951581954956055,
+   "per_clip": {
+    "hand_clapping1": {
+     "answer": "hand waving",
+     "hist": {
+      "walking": 4,
+      "hand waving": 6
+     }
+    },
+    "hand_clapping2": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 7,
+      "walking": 3
+     }
+    },
+    "hand_waving1": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 7,
+      "walking": 1,
+      "running": 2
+     }
+    },
+    "hand_waving2": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 7,
+      "walking": 3
+     }
+    }
+   }
+  },
+  {
+   "width": 640,
+   "stabilised": true,
+   "clips_correct": 2,
+   "clips": 4,
+   "windows": 40,
+   "windows_correct": 18,
+   "mean_events_pct": 0.601959228515625,
+   "per_clip": {
+    "hand_clapping1": {
+     "answer": "hand waving",
+     "hist": {
+      "walking": 3,
+      "hand waving": 7
+     }
+    },
+    "hand_clapping2": {
+     "answer": "hand waving",
+     "hist": {
+      "walking": 3,
+      "hand waving": 7
+     }
+    },
+    "hand_waving1": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 10
+     }
+    },
+    "hand_waving2": {
+     "answer": "hand waving",
+     "hist": {
+      "walking": 1,
+      "hand waving": 8,
+      "boxing": 1
+     }
+    }
+   }
+  },
+  {
+   "width": 520,
+   "stabilised": false,
+   "clips_correct": 0,
+   "clips": 4,
+   "windows": 40,
+   "windows_correct": 0,
+   "mean_events_pct": 2.7356529235839844,
+   "per_clip": {
+    "hand_clapping1": {
+     "answer": "walking",
+     "hist": {
+      "running": 2,
+      "walking": 6,
+      "jogging": 2
+     }
+    },
+    "hand_clapping2": {
+     "answer": "running",
+     "hist": {
+      "walking": 3,
+      "running": 7
+     }
+    },
+    "hand_waving1": {
+     "answer": "jogging",
+     "hist": {
+      "walking": 3,
+      "running": 5,
+      "jogging": 2
+     }
+    },
+    "hand_waving2": {
+     "answer": "running",
+     "hist": {
+      "walking": 5,
+      "running": 5
+     }
+    }
+   }
+  },
+  {
+   "width": 520,
+   "stabilised": true,
+   "clips_correct": 0,
+   "clips": 4,
+   "windows": 40,
+   "windows_correct": 3,
+   "mean_events_pct": 0.8593559265136719,
+   "per_clip": {
+    "hand_clapping1": {
+     "answer": "walking",
+     "hist": {
+      "walking": 9,
+      "jogging": 1
+     }
+    },
+    "hand_clapping2": {
+     "answer": "walking",
+     "hist": {
+      "walking": 5,
+      "hand waving": 5
+     }
+    },
+    "hand_waving1": {
+     "answer": "walking",
+     "hist": {
+      "walking": 8,
+      "jogging": 2
+     }
+    },
+    "hand_waving2": {
+     "answer": "jogging",
+     "hist": {
+      "walking": 2,
+      "running": 2,
+      "jogging": 3,
+      "hand waving": 3
+     }
+    }
+   }
+  },
+  {
+   "width": 420,
+   "stabilised": false,
+   "clips_correct": 0,
+   "clips": 4,
+   "windows": 40,
+   "windows_correct": 2,
+   "mean_events_pct": 3.2601881027221684,
+   "per_clip": {
+    "hand_clapping1": {
+     "answer": "walking",
+     "hist": {
+      "running": 1,
+      "walking": 9
+     }
+    },
+    "hand_clapping2": {
+     "answer": "running",
+     "hist": {
+      "running": 6,
+      "jogging": 4
+     }
+    },
+    "hand_waving1": {
+     "answer": "walking",
+     "hist": {
+      "walking": 7,
+      "running": 2,
+      "jogging": 1
+     }
+    },
+    "hand_waving2": {
+     "answer": "running",
+     "hist": {
+      "hand waving": 2,
+      "running": 5,
+      "walking": 1,
+      "jogging": 2
+     }
+    }
+   }
+  },
+  {
+   "width": 420,
+   "stabilised": true,
+   "clips_correct": 1,
+   "clips": 4,
+   "windows": 40,
+   "windows_correct": 7,
+   "mean_events_pct": 1.1327838897705078,
+   "per_clip": {
+    "hand_clapping1": {
+     "answer": "walking",
+     "hist": {
+      "walking": 10
+     }
+    },
+    "hand_clapping2": {
+     "answer": "jogging",
+     "hist": {
+      "jogging": 6,
+      "hand waving": 3,
+      "walking": 1
+     }
+    },
+    "hand_waving1": {
+     "answer": "walking",
+     "hist": {
+      "walking": 9,
+      "running": 1
+     }
+    },
+    "hand_waving2": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 7,
+      "running": 1,
+      "jogging": 2
+     }
+    }
+   }
+  },
+  {
+   "width": 320,
+   "stabilised": false,
+   "clips_correct": 1,
+   "clips": 4,
+   "windows": 40,
+   "windows_correct": 7,
+   "mean_events_pct": 4.081230163574219,
+   "per_clip": {
+    "hand_clapping1": {
+     "answer": "running",
+     "hist": {
+      "running": 8,
+      "walking": 1,
+      "hand waving": 1
+     }
+    },
+    "hand_clapping2": {
+     "answer": "jogging",
+     "hist": {
+      "jogging": 4,
+      "walking": 2,
+      "running": 4
+     }
+    },
+    "hand_waving1": {
+     "answer": "running",
+     "hist": {
+      "running": 7,
+      "walking": 3
+     }
+    },
+    "hand_waving2": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 7,
+      "walking": 2,
+      "jogging": 1
+     }
+    }
+   }
+  },
+  {
+   "width": 320,
+   "stabilised": true,
+   "clips_correct": 1,
+   "clips": 4,
+   "windows": 40,
+   "windows_correct": 10,
+   "mean_events_pct": 1.6033315658569338,
+   "per_clip": {
+    "hand_clapping1": {
+     "answer": "running",
+     "hist": {
+      "running": 10
+     }
+    },
+    "hand_clapping2": {
+     "answer": "jogging",
+     "hist": {
+      "jogging": 8,
+      "hand waving": 2
+     }
+    },
+    "hand_waving1": {
+     "answer": "running",
+     "hist": {
+      "running": 10
+     }
+    },
+    "hand_waving2": {
+     "answer": "hand waving",
+     "hist": {
+      "hand waving": 10
+     }
+    }
+   }
+  }
+ ]
+}

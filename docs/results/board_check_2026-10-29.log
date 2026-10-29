@@ -1,0 +1,36 @@
+== person22_boxing_d1
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222243 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person22_walking_d1
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222241 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person22_jogging_d1
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222242 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person22_running_d1
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222242 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person22_handwaving_d1
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222242 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person22_handclapping_d1
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222242 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person02_boxing_d2
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222244 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person03_walking_d3
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222244 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person05_jogging_d4
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222241 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person07_running_d2
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222244 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person08_handwaving_d3
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222244 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS
+== person10_handclapping_d4
+info: 300 frames, 0 differ; DMA start to result: min 222236 max 222242 clocks (8.89 ms), step 205831 clocks
+RESULT: PASS

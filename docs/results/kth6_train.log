@@ -1,0 +1,65 @@
+config: {   "in_hw": 32,   "in_ch": 2,   "c1": 16,   "c2": 32,   "c3": 0,   "classes": 6,   "leak_shift": 4,   "thr": [     64,     64,     64   ],   "vbits": 12,   "wscale": 16,   "bin_us": 33333,   "readout": "sum" }
+sizes: {'weights_int8': {'conv1': 288, 'conv2': 4608, 'fc': 12288}, 'membrane_words': {'conv1': 16384, 'conv2': 8192, 'fc': 6}, 'membrane_bits': {'conv1': 196608, 'conv2': 98304, 'fc': 72}, 'weight_bits': {'conv1': 2304, 'conv2': 36864, 'fc': 98304}}
+calibrated init std (int units, conv layers then fc): 42.16, 6.25, 2.12
+readout sum, logit scale 0.00488
+ep   0  loss 2.483  train 0.358  test(window) 0.589  test(sample) 0.622
+ep   1  loss 0.979  train 0.577  test(window) 0.670  test(sample) 0.699
+ep   2  loss 0.793  train 0.653  test(window) 0.670  test(sample) 0.702
+ep   3  loss 0.645  train 0.723  test(window) 0.666  test(sample) 0.715
+ep   4  loss 0.556  train 0.770  test(window) 0.696  test(sample) 0.738
+ep   5  loss 0.521  train 0.778  test(window) 0.707  test(sample) 0.741
+ep   6  loss 0.532  train 0.778  test(window) 0.701  test(sample) 0.754
+ep   7  loss 0.462  train 0.807  test(window) 0.708  test(sample) 0.779
+ep   8  loss 0.424  train 0.822  test(window) 0.715  test(sample) 0.736
+ep   9  loss 0.394  train 0.848  test(window) 0.715  test(sample) 0.760
+ep  10  loss 0.352  train 0.862  test(window) 0.675  test(sample) 0.703
+ep  11  loss 0.419  train 0.823  test(window) 0.722  test(sample) 0.779
+ep  12  loss 0.329  train 0.874  test(window) 0.717  test(sample) 0.768
+ep  13  loss 0.330  train 0.859  test(window) 0.733  test(sample) 0.764
+ep  14  loss 0.330  train 0.862  test(window) 0.709  test(sample) 0.737
+ep  15  loss 0.322  train 0.867  test(window) 0.740  test(sample) 0.786
+ep  16  loss 0.267  train 0.891  test(window) 0.730  test(sample) 0.780
+ep  17  loss 0.302  train 0.880  test(window) 0.743  test(sample) 0.793
+ep  18  loss 0.279  train 0.900  test(window) 0.740  test(sample) 0.763
+ep  19  loss 0.289  train 0.886  test(window) 0.740  test(sample) 0.789
+ep  20  loss 0.246  train 0.898  test(window) 0.739  test(sample) 0.772
+ep  21  loss 0.256  train 0.898  test(window) 0.737  test(sample) 0.772
+ep  22  loss 0.251  train 0.908  test(window) 0.738  test(sample) 0.762
+ep  23  loss 0.248  train 0.895  test(window) 0.751  test(sample) 0.802
+ep  24  loss 0.231  train 0.916  test(window) 0.764  test(sample) 0.816
+ep  25  loss 0.193  train 0.930  test(window) 0.759  test(sample) 0.799
+ep  26  loss 0.223  train 0.907  test(window) 0.775  test(sample) 0.794
+ep  27  loss 0.235  train 0.902  test(window) 0.769  test(sample) 0.807
+ep  28  loss 0.220  train 0.916  test(window) 0.772  test(sample) 0.827
+ep  29  loss 0.197  train 0.924  test(window) 0.758  test(sample) 0.775
+ep  30  loss 0.196  train 0.916  test(window) 0.771  test(sample) 0.806
+ep  31  loss 0.197  train 0.932  test(window) 0.754  test(sample) 0.790
+ep  32  loss 0.155  train 0.945  test(window) 0.763  test(sample) 0.792
+ep  33  loss 0.179  train 0.931  test(window) 0.758  test(sample) 0.784
+ep  34  loss 0.176  train 0.934  test(window) 0.756  test(sample) 0.794
+ep  35  loss 0.179  train 0.939  test(window) 0.762  test(sample) 0.798
+ep  36  loss 0.152  train 0.940  test(window) 0.751  test(sample) 0.801
+ep  37  loss 0.173  train 0.938  test(window) 0.763  test(sample) 0.799
+ep  38  loss 0.143  train 0.943  test(window) 0.754  test(sample) 0.802
+ep  39  loss 0.146  train 0.951  test(window) 0.765  test(sample) 0.796
+ep  40  loss 0.165  train 0.943  test(window) 0.757  test(sample) 0.802
+ep  41  loss 0.146  train 0.956  test(window) 0.763  test(sample) 0.810
+ep  42  loss 0.147  train 0.948  test(window) 0.762  test(sample) 0.799
+ep  43  loss 0.127  train 0.956  test(window) 0.763  test(sample) 0.799
+ep  44  loss 0.150  train 0.951  test(window) 0.774  test(sample) 0.802
+ep  45  loss 0.135  train 0.953  test(window) 0.764  test(sample) 0.807
+ep  46  loss 0.123  train 0.953  test(window) 0.768  test(sample) 0.810
+ep  47  loss 0.119  train 0.957  test(window) 0.766  test(sample) 0.806
+ep  48  loss 0.130  train 0.948  test(window) 0.767  test(sample) 0.806
+ep  49  loss 0.115  train 0.960  test(window) 0.764  test(sample) 0.806
+ep  50  loss 0.119  train 0.964  test(window) 0.764  test(sample) 0.807
+ep  51  loss 0.097  train 0.971  test(window) 0.762  test(sample) 0.810
+ep  52  loss 0.106  train 0.965  test(window) 0.761  test(sample) 0.811
+ep  53  loss 0.121  train 0.956  test(window) 0.763  test(sample) 0.811
+ep  54  loss 0.154  train 0.938  test(window) 0.767  test(sample) 0.810
+ep  55  loss 0.138  train 0.952  test(window) 0.764  test(sample) 0.805
+ep  56  loss 0.129  train 0.960  test(window) 0.766  test(sample) 0.811
+ep  57  loss 0.099  train 0.965  test(window) 0.764  test(sample) 0.809
+ep  58  loss 0.129  train 0.956  test(window) 0.764  test(sample) 0.807
+ep  59  loss 0.121  train 0.956  test(window) 0.765  test(sample) 0.807
+exported int8 weights + config to train\runs\kth6_32_16_32

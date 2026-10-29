@@ -1,0 +1,30 @@
+# demo.qsf -- DE10-Standard on-chip demo: pattern source -> event emulator -> VGA event view (roadmap 1.10/1.11/4.11)
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CSXFC6D6F31C6
+set_global_assignment -name TOP_LEVEL_ENTITY demo_top
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 21.1
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name NUM_PARALLEL_PROCESSORS 4
+
+set_global_assignment -name VERILOG_FILE ../../rtl/demo_top.v
+set_global_assignment -name VERILOG_FILE ../../rtl/pix_source.v
+set_global_assignment -name VERILOG_FILE ../../rtl/event_view.v
+set_global_assignment -name VERILOG_FILE ../../rtl/event_emulator.v
+set_global_assignment -name VERILOG_FILE ../../rtl/event_fifo.v
+set_global_assignment -name VERILOG_FILE ../../rtl/sdp_ram.v
+set_global_assignment -name VERILOG_FILE ../../rtl/log_lut.v
+set_global_assignment -name VERILOG_FILE ../../rtl/vga_timing.v
+set_global_assignment -name VERILOG_FILE ../../rtl/reset_sync.v
+set_global_assignment -name VERILOG_FILE ../../rtl/hex7seg.v
+set_global_assignment -name VERILOG_FILE ip/pll25/pll25.v
+set_global_assignment -name QIP_FILE ip/pll25/pll25.qip
+set_global_assignment -name SDC_FILE demo.sdc
+
+# ROM image path is relative to this project directory
+set_parameter -name LUT_FILE "../../rtl/log_lut.hex"
+
+# Pin locations and IO standards (copied from the Adaptive-Night-Vision project, generated from the Terasic golden top)
+set_global_assignment -name SOURCE_TCL_SCRIPT_FILE ../pins/de10_pins.tcl
+
+# Unused pins (incl. HPS-side pins, which this design does not instantiate)
+set_global_assignment -name RESERVE_ALL_UNUSED_PINS_WEAK_PULLUP "AS INPUT TRI-STATED WITH WEAK PULL-UP"

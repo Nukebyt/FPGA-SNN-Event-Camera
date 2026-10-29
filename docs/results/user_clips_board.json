@@ -1,0 +1,133 @@
+{
+ "backend": "board 192.168.137.200",
+ "rows": [
+  {
+   "clip": "hand_clapping1",
+   "cropped": false,
+   "truth": "hand clapping",
+   "frames": 450,
+   "windows": 14,
+   "clip_answer": "hand waving",
+   "correct": false,
+   "window_hist": {
+    "hand waving": 14
+   },
+   "truth_window_share": 0.0,
+   "mean_events_pct": 0.9730224609374999,
+   "mismatching_frames": 0
+  },
+  {
+   "clip": "hand_clapping1_crop",
+   "cropped": true,
+   "truth": "hand clapping",
+   "frames": 450,
+   "windows": 14,
+   "clip_answer": "hand waving",
+   "correct": false,
+   "window_hist": {
+    "walking": 2,
+    "hand waving": 12
+   },
+   "truth_window_share": 0.0,
+   "mean_events_pct": 0.5139295789930556,
+   "mismatching_frames": 0
+  },
+  {
+   "clip": "hand_clapping2",
+   "cropped": false,
+   "truth": "hand clapping",
+   "frames": 454,
+   "windows": 14,
+   "clip_answer": "hand waving",
+   "correct": false,
+   "window_hist": {
+    "hand waving": 11,
+    "boxing": 1,
+    "walking": 2
+   },
+   "truth_window_share": 0.0,
+   "mean_events_pct": 1.0109787995594712,
+   "mismatching_frames": 0
+  },
+  {
+   "clip": "hand_clapping2_crop",
+   "cropped": true,
+   "truth": "hand clapping",
+   "frames": 454,
+   "windows": 14,
+   "clip_answer": "hand waving",
+   "correct": false,
+   "window_hist": {
+    "hand waving": 10,
+    "walking": 4
+   },
+   "truth_window_share": 0.0,
+   "mean_events_pct": 0.7649291454432819,
+   "mismatching_frames": 0
+  },
+  {
+   "clip": "hand_waving1",
+   "cropped": false,
+   "truth": "hand waving",
+   "frames": 462,
+   "windows": 14,
+   "clip_answer": "hand waving",
+   "correct": true,
+   "window_hist": {
+    "hand waving": 12,
+    "boxing": 2
+   },
+   "truth_window_share": 0.8571428571428571,
+   "mean_events_pct": 1.7156163335362555,
+   "mismatching_frames": 0
+  },
+  {
+   "clip": "hand_waving1_crop",
+   "cropped": true,
+   "truth": "hand waving",
+   "frames": 462,
+   "windows": 14,
+   "clip_answer": "hand waving",
+   "correct": true,
+   "window_hist": {
+    "hand waving": 14
+   },
+   "truth_window_share": 1.0,
+   "mean_events_pct": 0.9274833646171536,
+   "mismatching_frames": 0
+  },
+  {
+   "clip": "hand_waving2",
+   "cropped": false,
+   "truth": "hand waving",
+   "frames": 454,
+   "windows": 14,
+   "clip_answer": "hand waving",
+   "correct": true,
+   "window_hist": {
+    "hand waving": 11,
+    "walking": 3
+   },
+   "truth_window_share": 0.7857142857142857,
+   "mean_events_pct": 1.058704527464207,
+   "mismatching_frames": 0
+  },
+  {
+   "clip": "hand_waving2_crop",
+   "cropped": true,
+   "truth": "hand waving",
+   "frames": 454,
+   "windows": 14,
+   "clip_answer": "hand waving",
+   "correct": true,
+   "window_hist": {
+    "hand waving": 14
+   },
+   "truth_window_share": 1.0,
+   "mean_events_pct": 1.1383594395305616,
+   "mismatching_frames": 0
+  }
+ ],
+ "frames": 3640,
+ "mismatching_frames": 0
+}

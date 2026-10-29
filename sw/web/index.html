@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event camera + SNN live demo</title>
+<style>
+:root {
+  --bg: #f4f5f7; --panel: #ffffff; --ink: #1d2330; --muted: #5f6b7a; --line: #d9dee5; --soft: #eef1f5;
+  --accent: #2f5597; --ok: #2e7d32; --okbg: #e3f2e1; --bad: #c62828; --badbg: #fdecea; --warnbg: #fff6e5; --warn: #9a6200;
+  --dvs: #1c1c1c; --track: #e6e9ee;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12151b; --panel: #1b2029; --ink: #e6e9ef; --muted: #9aa5b4; --line: #2d3440; --soft: #232a35;
+    --accent: #7ea6e8; --ok: #6cc070; --okbg: #1d3320; --bad: #ff7b72; --badbg: #3a1e1e; --warnbg: #352a14; --warn: #e3b55c;
+    --track: #2a313d;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--panel); }
+header h1 { font-size: 17px; margin: 0; font-weight: 650; }
+header .sub { color: var(--muted); font-size: 13px; flex: 1 1 120px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; background: var(--soft); font-size: 12.5px; color: var(--muted); white-space: nowrap; max-width: 100%; }
+.chip > span:last-child { overflow: hidden; text-overflow: ellipsis; }
+#srcChip { max-width: 440px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.dot.on { background: var(--ok); } .dot.off { background: var(--bad); } .dot.wait { background: var(--warn); }
+main { max-width: 1240px; margin: 0 auto; padding: 16px 20px 40px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.controls { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 14px; }
+.controls .group { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.controls h2, .panel h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 2px; font-weight: 600; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+select, input[type=text] { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 7px; padding: 6px 8px; min-width: 0; }
+select { flex: 1; }
+input[type=text] { width: 160px; }
+input[type=file] { font: inherit; color: var(--muted); max-width: 100%; }
+button { font: inherit; border: 1px solid var(--line); background: var(--soft); color: var(--ink); border-radius: 7px; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.stop { background: var(--bad); border-color: var(--bad); color: #fff; }
+button.cam.live { background: var(--bad); border-color: var(--bad); color: #fff; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.seg label { padding: 6px 12px; cursor: pointer; background: var(--panel); }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg input:checked + span { color: #fff; }
+.seg label:has(input:checked) { background: var(--accent); color: #fff; }
+.seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.check { display: inline-flex; align-items: center; gap: 5px; color: var(--ink); }
+.hint { color: var(--muted); font-size: 12.5px; }
+.banner { margin-top: 12px; padding: 10px 14px; border-radius: 9px; display: none; align-items: center; gap: 12px; flex-wrap: wrap; }
+.banner.show { display: flex; }
+.banner.err { background: var(--badbg); color: var(--bad); border: 1px solid var(--bad); }
+.banner.clip { background: var(--okbg); border: 1px solid var(--ok); }
+.banner.clip.wrong { background: var(--warnbg); border-color: var(--warn); }
+.banner .big { font-size: 18px; font-weight: 650; }
+.banner .hint { flex: 1 1 260px; min-width: 0; }
+.banner .x { margin-left: auto; background: transparent; border: none; color: inherit; font-size: 18px; padding: 0 4px; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr); gap: 14px; margin-top: 14px; }
+.panel { display: flex; flex-direction: column; gap: 8px; }
+.view { position: relative; width: 100%; aspect-ratio: 1; background: var(--dvs); border-radius: 8px; overflow: hidden; }
+.view img { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+.view .empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #8b95a3; font-size: 13px; text-align: center; padding: 20px; }
+.view video { position: absolute; right: 8px; bottom: 8px; width: 30%; border-radius: 6px; border: 2px solid #fff8; display: none; }
+.legend { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.bars { display: flex; flex-direction: column; gap: 7px; }
+.bar { display: grid; grid-template-columns: 104px 1fr 62px; align-items: center; gap: 8px; font-size: 13px; }
+.bar .name { color: var(--muted); }
+.bar.lead .name { color: var(--ink); font-weight: 650; }
+.bar .track { position: relative; height: 18px; background: var(--track); border-radius: 4px; }
+.bar .zero { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--muted); opacity: .6; }
+.bar .fill { position: absolute; top: 0; bottom: 0; border-radius: 3px; opacity: .38; transition: width .08s linear, left .08s linear; }
+.bar.lead .fill { opacity: 1; }
+.bar .val { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+.bar.lead .val { color: var(--ink); }
+.answer { border-top: 1px solid var(--line); padding-top: 10px; }
+.answer .lbl { font-size: 12.5px; color: var(--muted); }
+.answer .cls { font-size: 26px; font-weight: 700; line-height: 1.2; }
+.progress { height: 6px; background: var(--track); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.progress div { height: 100%; width: 0; background: var(--accent); }
+.history { display: flex; flex-wrap: wrap; gap: 4px; min-height: 26px; }
+.history span { padding: 2px 7px; border-radius: 5px; font-size: 12px; color: #fff; font-weight: 600; }
+.history .none { color: var(--muted); background: transparent; font-weight: 400; padding: 2px 0; }
+.stats { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; min-width: 0; }
+.stat .k { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat .v { font-size: 18px; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.match { margin-top: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.match .pill { padding: 5px 12px; border-radius: 999px; font-weight: 600; background: var(--soft); color: var(--muted); }
+.match .pill.ok { background: var(--okbg); color: var(--ok); }
+.match .pill.bad { background: var(--badbg); color: var(--bad); }
+.notes { margin-top: 18px; color: var(--muted); font-size: 13px; }
+.notes ul { margin: 6px 0 0; padding-left: 18px; }
+.notes li { margin: 3px 0; }
+.rec { margin-top: 14px; }
+.rec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.rec-head h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0; font-weight: 600; }
+.rec-body { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 16px; margin-top: 10px; }
+.rec-view { position: relative; aspect-ratio: 4 / 3; background: var(--dvs); border-radius: 8px; overflow: hidden; }
+.rec-view video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rec-view .empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #8b95a3; font-size: 13px; text-align: center; padding: 20px; }
+.rec-over { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; color: #fff; font-size: 76px; font-weight: 750; text-shadow: 0 2px 10px #000b; }
+.rec-over.live { align-items: flex-start; justify-content: flex-start; padding: 8px; font-size: 13px; text-shadow: none; }
+.rec-over .pill { background: #c62828; color: #fff; padding: 3px 10px; border-radius: 999px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.rec-ctl { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.fld { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; min-width: 0; }
+.fld select { flex: none; }
+button.recbtn { background: var(--bad); border-color: var(--bad); color: #fff; min-width: 108px; }
+#recStatus.err { color: var(--bad); }
+#recStatus.warn { color: var(--warn); }
+.cnt { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--soft); margin: 2px 4px 2px 0; font-size: 12px; color: var(--ink); }
+.cnt.zero { color: var(--muted); }
+.rec-list { margin-top: 12px; max-height: 300px; overflow: auto; border-top: 1px solid var(--line); }
+.rec-list table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.rec-list th, .rec-list td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.rec-list th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--panel); }
+.rec-list td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.rec-list td.warn { color: var(--warn); white-space: normal; min-width: 160px; }
+.rec-list button { padding: 2px 9px; font-size: 12.5px; }
+@media (max-width: 760px) { .rec-body { grid-template-columns: 1fr; } }
+@media (max-width: 980px) {
+  .controls { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: 1fr 1fr; }
+  .grid .panel.scores { grid-column: 1 / -1; }
+  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  main { padding: 12px; }
+  .grid { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Event camera + spiking neural network on an FPGA</h1>
+  <span class="sub">DE10-Standard &middot; six KTH actions &middot; one network step per frame, answer every 32 frames</span>
+  <span class="chip" id="srcChip"><span class="dot" id="srcDot"></span><span id="srcText">idle</span></span>
+  <span class="chip" title="live connection from this page to the demo server"><span class="dot wait" id="sseDot"></span><span id="sseText">connecting</span></span>
+</header>
+
+<main>
+  <section class="card controls" aria-label="controls">
+    <div class="group">
+      <h2>Source</h2>
+      <div class="row">
+        <select id="clipSel" aria-label="sample clip"><option>loading clips&hellip;</option></select>
+        <button class="primary" id="playBtn">Play clip</button>
+      </div>
+      <div class="row">
+        <input type="file" id="fileIn" accept="video/*,.avi,.mp4,.mov,.mkv,.webm,.m4v" aria-label="your video file">
+        <button id="uploadBtn" disabled>Upload &amp; play</button>
+        <span class="hint" id="upHint"></span>
+      </div>
+      <div class="row">
+        <button class="cam" id="camBtn">Webcam</button>
+        <button class="stop" id="stopBtn" disabled>Stop</button>
+        <span class="hint" id="camHint"></span>
+      </div>
+    </div>
+    <div class="group">
+      <h2>Backend</h2>
+      <div class="row">
+        <div class="seg" role="radiogroup" aria-label="backend">
+          <label><input type="radio" name="backend" value="board"><span>Board</span></label>
+          <label><input type="radio" name="backend" value="sim"><span>Model</span></label>
+        </div>
+        <input type="text" id="hostIn" placeholder="192.168.137.200" aria-label="board host[:port]" spellcheck="false">
+      </div>
+      <label class="check"><input type="checkbox" id="verifyCb" checked> check every board answer against the model</label>
+      <span class="hint">Board: the FPGA answers. Model: the bit-accurate Python models answer (no hardware needed).</span>
+    </div>
+    <div class="group">
+      <h2>Playback</h2>
+      <label class="check"><input type="checkbox" id="loopCb"> loop the clip</label>
+      <label class="check"><input type="checkbox" id="fastCb"> fast (unpaced, as fast as the backend answers)</label>
+      <span class="hint">Clips play at 30 frames/s like the training video. Changes apply to the next start.</span>
+    </div>
+  </section>
+
+  <div class="banner err" id="errBanner" role="alert">
+    <span id="errText"></span>
+    <button id="useModelBtn">Use the Model backend instead</button>
+    <button class="x" aria-label="dismiss" data-close="errBanner">&times;</button>
+  </div>
+  <div class="banner clip" id="clipBanner" role="status">
+    <span>Clip answer</span><span class="big" id="clipAns"></span><span id="clipTruth"></span><span class="hint" id="clipHow"></span>
+    <button class="x" aria-label="dismiss" data-close="clipBanner">&times;</button>
+  </div>
+
+  <section class="grid">
+    <div class="card panel">
+      <h2>Input frame (128 &times; 128 grey, what the board receives)</h2>
+      <div class="view"><img id="frameImg" alt="input frame"><div class="empty" id="frameEmpty">Choose a clip and press Play, upload a video, or press Webcam.</div><video id="camVideo" muted playsinline></video></div>
+      <div class="hint" id="frameInfo">&nbsp;</div>
+    </div>
+    <div class="card panel">
+      <h2>DVS events of this frame</h2>
+      <div class="view"><img id="evImg" alt="events of this frame"><div class="empty" id="evEmpty">&nbsp;</div></div>
+      <div class="legend"><span><i class="sw" style="background:#3ce65a"></i>ON (brighter)</span><span><i class="sw" style="background:#eb3c3c"></i>OFF (darker)</span></div>
+      <div class="hint">Drawn on the laptop by the same bit-exact emulator model as in the FPGA (the board returns counts, not pictures).</div>
+    </div>
+    <div class="card panel scores">
+      <h2>Running window score</h2>
+      <div class="bars" id="bars"></div>
+      <div class="answer" aria-live="polite">
+        <div class="lbl" id="ansLbl">Answer of the last finished 32-frame window</div>
+        <div class="cls" id="ansCls">&mdash;</div>
+        <div class="lbl" id="stepLbl">step 0 / 32</div>
+        <div class="progress"><div id="stepBar"></div></div>
+      </div>
+      <div>
+        <div class="lbl hint" style="margin-bottom:4px">Window answers, oldest to newest</div>
+        <div class="history" id="history"><span class="none">none yet</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="counters">
+    <div class="stat"><div class="k">step in window</div><div class="v" id="sStep">&ndash;</div></div>
+    <div class="stat"><div class="k">windows done</div><div class="v" id="sWin">&ndash;</div></div>
+    <div class="stat"><div class="k">events this frame</div><div class="v" id="sEv">&ndash;</div></div>
+    <div class="stat"><div class="k">spikes L1 / L2</div><div class="v" id="sSpk">&ndash;</div></div>
+    <div class="stat" title="DMA start to result inside the FPGA, from its cycle counter (25 MHz)"><div class="k">FPGA latency</div><div class="v" id="sLat">&ndash;</div></div>
+    <div class="stat" title="laptop: frame sent to answer received (network + ARM + FPGA)"><div class="k">round trip</div><div class="v" id="sRtt">&ndash;</div></div>
+    <div class="stat" title="frames per second processed, over the last 30 frames"><div class="k">measured fps</div><div class="v" id="sFps">&ndash;</div></div>
+    <div class="stat"><div class="k">frame</div><div class="v" id="sIdx">&ndash;</div></div>
+  </section>
+
+  <section class="match">
+    <span class="pill" id="matchPill">board == model: not checked</span>
+    <span class="hint" id="matchHint">With the Board backend and the check on, every board answer (spike counts, events, currents, scores, window class) is compared with the bit-accurate model.</span>
+  </section>
+
+  <section class="card rec" aria-label="record training clips">
+    <div class="rec-head">
+      <h2>Record training clips (webcam)</h2>
+      <span class="hint" id="recCounts"></span>
+    </div>
+    <div class="rec-body">
+      <div class="rec-view">
+        <video id="recVideo" muted playsinline></video>
+        <div class="empty" id="recEmpty">Camera off. Press &ldquo;Open camera&rdquo; to frame yourself, or just press Record.</div>
+        <div class="rec-over" id="recOver" aria-live="assertive"></div>
+      </div>
+      <div class="rec-ctl">
+        <div class="row">
+          <label class="fld">Action
+            <select id="recAction">
+              <option value="walking">walking</option>
+              <option value="jogging">jogging</option>
+              <option value="running">running</option>
+              <option value="boxing">boxing</option>
+              <option value="handwaving">hand waving</option>
+              <option value="handclapping">hand clapping</option>
+              <option value="none">none (no action)</option>
+            </select>
+          </label>
+          <label class="fld">Subject <input type="text" id="recSubject" placeholder="e.g. p01" maxlength="32" spellcheck="false"></label>
+        </div>
+        <div class="row">
+          <label class="fld">Length
+            <select id="recLen">
+              <option value="5">5 s</option>
+              <option value="10" selected>10 s</option>
+              <option value="15">15 s</option>
+              <option value="20">20 s</option>
+              <option value="30">30 s</option>
+              <option value="0">until stopped (max 60 s)</option>
+            </select>
+          </label>
+          <label class="check"><input type="checkbox" id="recCountdown" checked> 3 s countdown</label>
+        </div>
+        <div class="row">
+          <input type="text" id="recNote" placeholder="note (optional): place, light, clothes, side view&hellip;" maxlength="200" style="flex:1; width:auto" aria-label="note">
+        </div>
+        <div class="row">
+          <button id="recCamBtn">Open camera</button>
+          <button class="recbtn" id="recBtn">&#9679; Record</button>
+          <button id="recRetryBtn" style="display:none">Retry saving</button>
+          <span class="hint" id="recStatus" role="status"></span>
+        </div>
+        <div class="hint">The preview shows exactly what is saved: the centre of the camera picture cut to 4:3 (the KTH shape), up to 640&times;480, not mirrored, at the frame rate the camera really delivers. Saved to <code>data/recordings/&lt;action&gt;/</code> with a label file; the classifier does not need to run and no board is needed. Like KTH: camera still (on a table, not in the hand), whole body in the picture, plain background, side view for walking / jogging / running, one action per clip. The subject name keeps one person&rsquo;s clips together when the data is split into training and test.</div>
+      </div>
+    </div>
+    <div class="rec-list" id="recList"></div>
+  </section>
+
+  <section class="notes">
+    <strong>What to expect.</strong>
+    <ul>
+      <li>The network knows six KTH actions and always answers one of them; there is no &ldquo;nothing&rdquo; class. It was trained on KTH video (fixed camera, whole person in the frame, plain background) and scores 79.9&nbsp;% per clip on unseen KTH people. Jogging versus running is its weakest pair.</li>
+      <li>Every frame is prepared like the training data: grey, the whole frame squashed to 128&times;128, 30 frames/s. The answer of a clip is the class with the largest sum of its finished windows&rsquo; scores.</li>
+      <li>Webcam: frames go to the server as JPEG (about 320&times;240, centre-cropped to 4:3 like KTH), so they are noisier than a decoded video file and the emulator sees some compression flicker as events. A webcam that delivers fewer than 30 frames/s moves further per network step than the training video. Stand back so your whole body is in the picture, in front of a plain wall, and keep the camera still.</li>
+      <li>All tabs share one session: every open tab shows the same stream and the last button pressed wins. The board serves one client at a time; Stop releases it (and so does closing the page, after a few seconds).</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+"use strict";
+const CLASSES = ["walking", "jogging", "running", "boxing", "hand waving", "hand clapping"];
+const CCOL = ["#4C78A8", "#72B7B2", "#54A24B", "#E45756", "#F58518", "#B279A2"];   // scripts/make_readme_media.py
+const T = 32;
+const $ = (id) => document.getElementById(id);
+
+let clips = [];
+let status = { running: false };
+let currentRun = null;
+let maxUploadMb = 200;
+let es = null, sseBackoff = 1000, sseTimer = null;
+let cam = { on: false, token: null, run: null };
+let rec = { camera: false, state: "idle", stop: false, pending: null };   // the recorder; state: idle, countdown, recording, saving
+let lastSource = null;            // what to restart with the Model backend after a board error
+
+// ---------- bars ----------
+const barEls = CLASSES.map((name, k) => {
+  const row = document.createElement("div");
+  row.className = "bar";
+  row.innerHTML = '<span class="name"></span><span class="track"><span class="zero"></span><span class="fill"></span></span><span class="val">0</span>';
+  row.querySelector(".name").textContent = name;
+  row.querySelector(".fill").style.background = CCOL[k];
+  $("bars").appendChild(row);
+  return { row, fill: row.querySelector(".fill"), val: row.querySelector(".val") };
+});
+
+function drawBars(score, leader) {
+  const span = Math.max(1, ...score.map((v) => Math.abs(v)));
+  if (score.every((v) => v === 0)) leader = -1;        // nothing seen yet: the tie rule would name class 0, do not show it
+  score.forEach((v, k) => {
+    const w = 50 * Math.abs(v) / span;
+    const b = barEls[k];
+    b.fill.style.width = w + "%";
+    b.fill.style.left = (v >= 0 ? 50 : 50 - w) + "%";
+    b.val.textContent = v;
+    b.row.classList.toggle("lead", k === leader);
+  });
+}
+
+function chip(cls) {
+  const s = document.createElement("span");
+  s.textContent = CLASSES[cls];
+  s.style.background = CCOL[cls];
+  return s;
+}
+
+function resetView() {
+  drawBars([0, 0, 0, 0, 0, 0], -1);
+  $("ansCls").textContent = "—";
+  $("ansCls").style.color = "";
+  $("history").innerHTML = '<span class="none">none yet</span>';
+  for (const id of ["sStep", "sWin", "sEv", "sSpk", "sLat", "sRtt", "sFps", "sIdx"]) $(id).textContent = "–";
+  $("stepLbl").textContent = "step 0 / " + T;
+  $("stepBar").style.width = "0";
+  setMatch(null);
+  hide("clipBanner");
+}
+
+// ---------- banners ----------
+function show(id) { $(id).classList.add("show"); }
+function hide(id) { $(id).classList.remove("show"); }
+document.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => hide(b.dataset.close)));
+
+function showError(msg, backend) {
+  $("errText").textContent = msg;
+  $("useModelBtn").style.display = backend === "board" ? "" : "none";
+  show("errBanner");
+}
+
+function setMatch(m) {
+  const p = $("matchPill");
+  p.className = "pill";
+  if (!m || !m.verify) {
+    p.textContent = m && m.backend === "sim" ? "Model backend: nothing to compare" : "board == model: not checked";
+    $("matchHint").textContent = m && m.backend === "board" ? "Turn on the check to compare every board answer with the bit-accurate model." : "With the Board backend and the check on, every board answer (spike counts, events, currents, scores, window class) is compared with the bit-accurate model.";
+    return;
+  }
+  const ok = m.matched === m.checked;
+  p.classList.add(ok ? "ok" : "bad");
+  p.textContent = "board == model: " + m.matched + " / " + m.checked + " frames match";
+  $("matchHint").textContent = ok ? "Every board answer so far is identical to the bit-accurate model." : "First difference: " + (m.first_mismatch || "?");
+}
+
+// ---------- status ----------
+function applyStatus(st) {
+  status = st;
+  const running = !!st.running;
+  $("stopBtn").disabled = !running && !cam.on;
+  $("srcDot").className = "dot" + (running ? " on" : "");
+  if (running) {
+    const where = st.backend === "board" ? "Board " + (st.host || "") : "Model";
+    $("srcText").textContent = (st.source === "webcam" ? "webcam" : (st.msg || "playing") + " " + (st.name || "")) + " → " + where;
+  } else {
+    $("srcText").textContent = "idle";
+  }
+  if (st.run && st.run !== currentRun) { currentRun = st.run; resetView(); }
+  if (cam.on && (!running || st.source !== "webcam" || (cam.run && st.run && st.run !== cam.run))) {
+    stopCamLocal(running ? "Webcam stopped: another source was started (maybe in another tab)." : "");
+  }
+}
+
+// ---------- server-sent events ----------
+function connectSSE() {
+  clearTimeout(sseTimer);
+  if (es) es.close();
+  $("sseDot").className = "dot wait";
+  $("sseText").textContent = "connecting";
+  es = new EventSource("/stream");
+  es.onopen = () => {
+    sseBackoff = 1000;
+    $("sseDot").className = "dot on";
+    $("sseText").textContent = "live";
+    loadClips(false);
+  };
+  es.onerror = () => {
+    $("sseDot").className = "dot off";
+    $("sseText").textContent = "server lost, reconnecting";
+    if (es.readyState === EventSource.CLOSED) {          // the browser gave up: retry ourselves, slower each time
+      sseTimer = setTimeout(connectSSE, sseBackoff);
+      sseBackoff = Math.min(sseBackoff * 2, 15000);
+    }
+  };
+  es.onmessage = (ev) => {
+    let m;
+    try { m = JSON.parse(ev.data); } catch (e) { return; }
+    if (m.type === "status") applyStatus(m);
+    else if (m.type === "frame") onFrame(m);
+    else if (m.type === "clip_done") onClipDone(m);
+    else if (m.type === "error") onError(m);
+  };
+}
+
+function onFrame(m) {
+  if (m.run !== currentRun) { currentRun = m.run; resetView(); }
+  $("frameImg").src = "data:image/jpeg;base64," + m.frame;
+  $("evImg").src = "data:image/png;base64," + m.events;
+  $("frameEmpty").style.display = "none";
+  $("evEmpty").style.display = "none";
+  drawBars(m.score, m.leader);
+  if (m.windows > 0) {
+    $("ansCls").textContent = CLASSES[m.pred];
+    $("ansCls").style.color = CCOL[m.pred];
+    $("ansLbl").textContent = "Answer of the last finished 32-frame window (" + (m.backend === "board" ? "board" : "model") + ")";
+  }
+  $("stepLbl").textContent = "step " + m.wcount + " / " + T;
+  $("stepBar").style.width = (100 * m.wcount / T) + "%";
+  const h = $("history");
+  h.innerHTML = "";
+  if (m.window_preds.length) m.window_preds.forEach((c) => h.appendChild(chip(c)));
+  else h.innerHTML = '<span class="none">none yet (first answer after 32 frames)</span>';
+  $("sStep").textContent = m.wcount + " / " + T;
+  $("sWin").textContent = m.windows;
+  $("sEv").textContent = m.nevents;
+  $("sSpk").textContent = m.spk1 + " / " + m.spk2;
+  $("sLat").textContent = m.backend === "board" ? m.latency_ms.toFixed(2) + " ms" : "(model)";
+  $("sRtt").textContent = m.rtt_ms.toFixed(1) + " ms";
+  $("sFps").textContent = m.fps.toFixed(1);
+  $("sIdx").textContent = m.total ? (m.idx + 1) + " / " + m.total : String(m.idx + 1);
+  const truth = m.truth ? " · true action: " + m.truth : "";
+  $("frameInfo").textContent = (m.source === "webcam" ? "webcam" : m.name) + truth;
+  setMatch(m);
+}
+
+function onClipDone(m) {
+  const ans = m.answer || "—";
+  $("clipAns").textContent = ans;
+  $("clipAns").style.color = m.answer ? CCOL[CLASSES.indexOf(m.answer)] : "";
+  const b = $("clipBanner");
+  b.classList.remove("wrong");
+  if (m.truth) {
+    const ok = m.truth === m.answer;
+    $("clipTruth").textContent = ok ? "✔ correct (true action: " + m.truth + ")" : "✘ true action: " + m.truth;
+    if (!ok) b.classList.add("wrong");
+  } else {
+    $("clipTruth").textContent = "";
+  }
+  let how = m.name + ", " + m.frames + " frames, " + m.how;
+  if (m.verify) how += "; board == model on " + m.matched + " / " + m.checked + " frames";
+  $("clipHow").textContent = how;
+  show("clipBanner");
+}
+
+function onError(m) {
+  showError(m.msg, m.backend);
+}
+
+// ---------- clips ----------
+async function loadClips(selectPath) {
+  let j;
+  try { j = await (await fetch("/api/clips")).json(); } catch (e) { return; }
+  maxUploadMb = j.max_upload_mb || maxUploadMb;
+  const keep = selectPath || $("clipSel").value;
+  clips = j.clips;
+  const sel = $("clipSel");
+  sel.innerHTML = "";
+  const groups = {};
+  for (const c of clips) {
+    if (!groups[c.group]) {
+      groups[c.group] = document.createElement("optgroup");
+      groups[c.group].label = c.group;
+      sel.appendChild(groups[c.group]);
+    }
+    const o = document.createElement("option");
+    o.value = c.path;
+    o.textContent = c.file.replace(/_uncomp\.avi$/, "") + (c.truth ? "  —  true: " + c.truth : "");
+    groups[c.group].appendChild(o);
+  }
+  if (!clips.length) sel.innerHTML = "<option value=''>no clips found (data/kth/videos, data/user_clips)</option>";
+  if (keep && clips.some((c) => c.path === keep)) sel.value = keep;
+  if (!loadClips.init) {               // first load: defaults from the server
+    loadClips.init = true;
+    $("hostIn").value = j.board || "192.168.137.200";
+    document.querySelector("input[name=backend][value=" + (j.default_backend || "sim") + "]").checked = true;
+    backendChanged();
+  }
+  applyStatus(j.status || {});
+}
+
+function cfg() {
+  return {
+    backend: document.querySelector("input[name=backend]:checked").value,
+    host: $("hostIn").value.trim(),
+    verify: $("verifyCb").checked,
+    loop: $("loopCb").checked,
+    fast: $("fastCb").checked,
+  };
+}
+
+function backendChanged() {
+  const board = cfg().backend === "board";
+  $("hostIn").disabled = !board;
+  $("verifyCb").disabled = !board;
+}
+document.querySelectorAll("input[name=backend]").forEach((r) => r.addEventListener("change", backendChanged));
+
+async function post(url, body, headers) {
+  const r = await fetch(url, { method: "POST", headers: headers || { "Content-Type": "application/json" }, body: body === undefined ? "{}" : body });
+  let j = {};
+  try { j = await r.json(); } catch (e) { /* empty body */ }
+  j.status = r.status;
+  return j;
+}
+
+async function playPath(path) {
+  if (!path) return;
+  hide("errBanner");
+  hide("clipBanner");
+  if (cam.on) stopCamLocal("");
+  lastSource = { kind: "clip", path };
+  const r = await post("/api/start", JSON.stringify(Object.assign(cfg(), { path })));
+  if (!r.ok) showError(r.msg || "could not start the clip", null);
+}
+
+$("playBtn").addEventListener("click", () => playPath($("clipSel").value));
+$("clipSel").addEventListener("dblclick", () => playPath($("clipSel").value));
+
+$("stopBtn").addEventListener("click", async () => {
+  if (cam.on) stopCamLocal("");
+  await post("/api/stop");
+});
+
+$("useModelBtn").addEventListener("click", () => {
+  document.querySelector("input[name=backend][value=sim]").checked = true;
+  backendChanged();
+  hide("errBanner");
+  if (lastSource && lastSource.kind === "clip") playPath(lastSource.path);
+  else if (lastSource && lastSource.kind === "webcam") startCam();
+});
+
+// ---------- upload ----------
+$("fileIn").addEventListener("change", () => {
+  const f = $("fileIn").files[0];
+  $("uploadBtn").disabled = !f;
+  $("upHint").textContent = f ? (f.size / 1048576).toFixed(1) + " MB" : "";
+});
+
+$("uploadBtn").addEventListener("click", () => {
+  const f = $("fileIn").files[0];
+  if (!f) return;
+  if (f.size > maxUploadMb * 1048576) {
+    showError("The file is " + (f.size / 1048576).toFixed(0) + " MB; the server accepts up to " + maxUploadMb + " MB (start it with --max-upload-mb to change).", null);
+    return;
+  }
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/upload");
+  xhr.setRequestHeader("X-Filename", f.name);
+  xhr.upload.onprogress = (e) => { if (e.lengthComputable) $("upHint").textContent = "uploading " + Math.round(100 * e.loaded / e.total) + " %"; };
+  xhr.onload = async () => {
+    let j = {};
+    try { j = JSON.parse(xhr.responseText); } catch (e) { /* not JSON */ }
+    $("uploadBtn").disabled = false;
+    if (xhr.status !== 200 || !j.ok) {
+      $("upHint").textContent = "";
+      showError("Upload failed: " + (j.msg || xhr.status), null);
+      return;
+    }
+    $("upHint").textContent = "uploaded";
+    await loadClips(j.path);
+    playPath(j.path);
+  };
+  xhr.onerror = () => { $("uploadBtn").disabled = false; showError("Upload failed: the server did not answer.", null); };
+  $("uploadBtn").disabled = true;
+  xhr.send(f);
+});
+
+// ---------- the camera (one stream, shared by the classifier's Webcam source and the recorder) ----------
+const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+let media = null, mediaPending = null;
+
+async function getCamera() {
+  if (media && media.active) return media;
+  if (mediaPending) return mediaPending;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    const e = new Error("no camera API");
+    e.code = "nocam";
+    throw e;
+  }
+  mediaPending = navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 30 } }, audio: false });
+  try {
+    media = await mediaPending;
+  } finally {
+    mediaPending = null;
+  }
+  media.getVideoTracks().forEach((t) => t.addEventListener("ended", () => { if (rec.state === "recording") rec.stop = true; }));
+  return media;
+}
+
+function cameraError(e) {
+  if (e && e.code === "nocam") return "This browser does not allow the camera on this page. Cameras need http://127.0.0.1 / localhost or HTTPS; from a phone, record a video and use Upload instead.";
+  return "Camera not available: " + e.name + (e.message ? " (" + e.message + ")" : "");
+}
+
+function releaseCamera() {                     // stop the camera once neither the classifier nor the recorder uses it
+  if (media && !cam.on && !rec.camera) {
+    media.getTracks().forEach((t) => t.stop());
+    media = null;
+  }
+}
+
+// ---------- webcam source for the classifier ----------
+async function startCam() {
+  hide("errBanner");
+  hide("clipBanner");
+  let stream;
+  try {
+    stream = await getCamera();
+  } catch (e) {
+    showError(cameraError(e), null);
+    return;
+  }
+  const v = $("camVideo");
+  v.srcObject = stream;
+  try { await v.play(); } catch (e) { /* autoplay with muted video is allowed */ }
+  lastSource = { kind: "webcam" };
+  $("camHint").textContent = "connecting…";
+  const r = await post("/api/webcam/start", JSON.stringify(cfg()));
+  if (!r.ok) {
+    v.srcObject = null;
+    releaseCamera();
+    $("camHint").textContent = "";
+    showError(r.msg || "could not start the webcam source", cfg().backend);
+    return;
+  }
+  cam = { on: true, token: r.token, run: r.run };
+  currentRun = r.run;
+  resetView();
+  v.style.display = "block";
+  $("camBtn").classList.add("live");
+  $("camBtn").textContent = "Webcam on";
+  $("stopBtn").disabled = false;
+  $("camHint").textContent = "";
+  camLoop(r.token);
+}
+
+async function camLoop(token) {
+  const v = $("camVideo");
+  const c = document.createElement("canvas");
+  c.width = 320; c.height = 240;
+  const ctx = c.getContext("2d");
+  while (cam.on && cam.token === token) {
+    const t0 = performance.now();
+    const vw = v.videoWidth, vh = v.videoHeight;
+    if (!vw || !vh) { await sleep(50); continue; }
+    let sw = vw, sh = vh;                              // centre crop to 4:3 (the KTH picture shape), then 320x240
+    if (vw * 3 > vh * 4) sw = Math.round(vh * 4 / 3); else sh = Math.round(vw * 3 / 4);
+    ctx.drawImage(v, (vw - sw) / 2, (vh - sh) / 2, sw, sh, 0, 0, 320, 240);
+    const blob = await new Promise((res) => c.toBlob(res, "image/jpeg", 0.85));
+    if (!cam.on || cam.token !== token) break;
+    let r;
+    try {
+      r = await fetch("/api/webcam/frame", { method: "POST", headers: { "Content-Type": "image/jpeg", "X-Session": token }, body: blob });
+    } catch (e) {
+      stopCamLocal("Webcam stopped: the server did not answer.");
+      break;
+    }
+    if (r.status !== 200) {
+      let j = {};
+      try { j = await r.json(); } catch (e) { /* empty */ }
+      if (cam.token === token) stopCamLocal(r.status === 409 ? "" : "Webcam stopped: " + (j.msg || r.status));
+      break;
+    }
+    const dt = performance.now() - t0;
+    if (dt < 1000 / 30) await sleep(1000 / 30 - dt);  // at most 30 frames/s, otherwise as fast as the server answers
+  }
+}
+
+function stopCamLocal(msg) {
+  cam = { on: false, token: null, run: null };
+  releaseCamera();
+  const v = $("camVideo");
+  v.srcObject = null;
+  v.style.display = "none";
+  $("camBtn").classList.remove("live");
+  $("camBtn").textContent = "Webcam";
+  $("stopBtn").disabled = !status.running;
+  if (msg) showError(msg, null);
+}
+
+$("camBtn").addEventListener("click", async () => {
+  if (cam.on) { stopCamLocal(""); await post("/api/stop"); return; }
+  startCam();
+});
+
+// ---------- recorder: labelled webcam clips for training (data/recordings/<action>/) ----------
+const REC_MAX_S = 60, REC_MIN_FRAMES = 15, REC_W = 640;
+const REC_LABEL = { walking: "walking", jogging: "jogging", running: "running", boxing: "boxing", handwaving: "hand waving", handclapping: "hand clapping", none: "none" };
+
+function recMsg(text, kind) {
+  const s = $("recStatus");
+  s.textContent = text || "";
+  s.className = "hint" + (kind ? " " + kind : "");
+}
+
+function recOverlay(text, live) {
+  const o = $("recOver");
+  o.className = "rec-over" + (live ? " live" : "");
+  o.innerHTML = "";
+  if (!text) return;
+  if (live) {
+    const p = document.createElement("span");
+    p.className = "pill";
+    p.textContent = text;
+    o.appendChild(p);
+  } else {
+    o.textContent = text;
+  }
+}
+
+function setRecState(state) {
+  rec.state = state;
+  const idle = state === "idle";
+  const b = $("recBtn");
+  b.disabled = state === "saving";
+  b.textContent = state === "countdown" ? "Cancel" : state === "recording" ? "■ Stop" : state === "saving" ? "Saving…" : "● Record";
+  $("recCamBtn").disabled = !idle;
+  $("recCamBtn").textContent = rec.camera ? "Close camera" : "Open camera";
+  for (const id of ["recAction", "recSubject", "recLen", "recCountdown", "recNote"]) $(id).disabled = !idle;
+  $("recRetryBtn").style.display = idle && rec.pending ? "" : "none";
+}
+
+async function openRecCamera() {
+  if (rec.camera) return true;
+  let s;
+  try {
+    s = await getCamera();
+  } catch (e) {
+    recMsg(cameraError(e), "err");
+    return false;
+  }
+  rec.camera = true;
+  const v = $("recVideo");
+  v.srcObject = s;
+  try { await v.play(); } catch (e) { /* muted video may autoplay */ }
+  for (let k = 0; k < 60 && !v.videoWidth; k++) await sleep(50);   // wait for the first picture
+  $("recEmpty").style.display = "none";
+  setRecState(rec.state);
+  return true;
+}
+
+function closeRecCamera() {
+  if (rec.state !== "idle") return;
+  rec.camera = false;
+  $("recVideo").srcObject = null;
+  $("recEmpty").style.display = "";
+  releaseCamera();
+  setRecState("idle");
+}
+
+// Grab every frame the camera delivers (requestVideoFrameCallback), centre-cropped to 4:3, as JPEG, with its capture time.
+function captureFrames(v, lenS) {
+  return new Promise((resolve) => {
+    const vw = v.videoWidth, vh = v.videoHeight;
+    let sw = vw, sh = vh;
+    if (vw * 3 > vh * 4) sw = Math.round(vh * 4 / 3); else sh = Math.round(vw * 3 / 4);
+    const W = Math.max(8, Math.floor(Math.min(REC_W, sw) / 8) * 8), H = W * 3 / 4;
+    const c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    const ctx = c.getContext("2d");
+    const rvfc = typeof v.requestVideoFrameCallback === "function";
+    const out = { blobs: [], media: [], wall: [], missed: 0, w: W, h: H, rvfc, stalled: false, ended: false };
+    let wall0 = null, lastPresented = null, lastWall = performance.now(), done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearInterval(guard);
+      resolve(out);
+    };
+    const guard = setInterval(() => {                 // the camera stopped delivering (tab hidden, camera unplugged)
+      if (performance.now() - lastWall > 2000) { out.stalled = true; finish(); }
+    }, 250);
+    const next = () => {
+      if (rvfc) v.requestVideoFrameCallback(grab);
+      else setTimeout(() => grab(performance.now(), null), 1000 / 30);
+    };
+    const grab = (now, meta) => {
+      if (done) return;
+      if (!media || !media.active) { out.ended = true; return finish(); }
+      if (rec.stop) return finish();
+      const wall = performance.now();
+      if (wall0 !== null && wall - wall0 >= lenS * 1000 - 1000 / 60) return finish();
+      if (wall0 === null) wall0 = wall;
+      lastWall = wall;
+      if (meta && lastPresented !== null && meta.presentedFrames > lastPresented + 1) out.missed += meta.presentedFrames - lastPresented - 1;
+      if (meta) lastPresented = meta.presentedFrames;
+      ctx.drawImage(v, (vw - sw) / 2, (vh - sh) / 2, sw, sh, 0, 0, W, H);
+      out.blobs.push(new Promise((res) => c.toBlob(res, "image/jpeg", 0.92)));   // toBlob copies the canvas now, encodes later
+      out.media.push(meta && Number.isFinite(meta.mediaTime) ? meta.mediaTime * 1000 : NaN);
+      out.wall.push(wall);
+      const t = (wall - wall0) / 1000;
+      recOverlay("● REC " + t.toFixed(1) + " s" + (lenS < REC_MAX_S ? " / " + lenS + " s" : "") + " · " + out.blobs.length + " frames", true);
+      next();
+    };
+    next();
+  });
+}
+
+// Capture times: the camera's own frame times when they are usable (rising, and spanning the same time as the page clock),
+// otherwise the time the page received each frame.
+function pickStamps(cap) {
+  const m = cap.media, w = cap.wall, n = w.length;
+  const span = (a) => a[n - 1] - a[0];
+  const rising = m.every((t, k) => Number.isFinite(t) && (k === 0 || t > m[k - 1]));
+  if (cap.rvfc && n > 1 && rising && Math.abs(span(m) - span(w)) < 0.1 * span(w) + 50) return { stamps: m, timing: "camera frame times (requestVideoFrameCallback mediaTime)" };
+  return { stamps: w, timing: cap.rvfc ? "page receive times (requestVideoFrameCallback)" : "page timer, about 30 frames/s (this browser has no requestVideoFrameCallback)" };
+}
+
+async function recordClip() {
+  const subject = $("recSubject").value.trim().replace(/\s+/g, "-");
+  if (!/^[A-Za-z0-9-]{1,32}$/.test(subject)) {
+    recMsg("Enter a subject first: 1 to 32 letters, digits or '-' (it keeps one person's clips together when the data is split).", "err");
+    $("recSubject").focus();
+    return;
+  }
+  $("recSubject").value = subject;
+  try { localStorage.setItem("snnRecSubject", subject); } catch (e) { /* storage blocked: fine */ }
+  rec.stop = false;
+  rec.pending = null;
+  setRecState("countdown");
+  recMsg("");
+  if (!(await openRecCamera())) { setRecState("idle"); return; }
+  const v = $("recVideo");
+  if (!v.videoWidth) { recMsg("The camera gives no picture.", "err"); setRecState("idle"); return; }
+  const action = $("recAction").value;
+  const lenS = Number($("recLen").value) || REC_MAX_S;
+  if ($("recCountdown").checked) {
+    for (let k = 3; k > 0 && !rec.stop; k--) {
+      recOverlay(String(k), false);
+      await sleep(1000);
+    }
+  }
+  recOverlay("");
+  if (rec.stop) { setRecState("idle"); recMsg("Cancelled."); return; }
+  setRecState("recording");
+  const cap = await captureFrames(v, lenS);
+  recOverlay("");
+  setRecState("saving");
+  recMsg("encoding…");
+  const blobs = await Promise.all(cap.blobs);
+  if (blobs.length < REC_MIN_FRAMES || blobs.some((b) => !b)) {
+    setRecState("idle");
+    recMsg(blobs.length < REC_MIN_FRAMES ? "Too short (" + blobs.length + " frames); nothing saved." : "The browser could not encode the frames; nothing saved.", "err");
+    return;
+  }
+  const { stamps, timing } = pickStamps(cap);
+  const track = media && media.getVideoTracks()[0];
+  const st = track && track.getSettings ? track.getSettings() : {};
+  const header = {
+    action, subject, note: $("recNote").value.trim(), sizes: blobs.map((b) => b.size), stamps_ms: stamps,
+    missed: cap.missed, timing, width: cap.w, height: cap.h, user_agent: navigator.userAgent,
+    camera: { label: track ? track.label : "", width: st.width, height: st.height, frameRate: st.frameRate },
+  };
+  const hb = new TextEncoder().encode(JSON.stringify(header));
+  const len = new Uint8Array(4);
+  new DataView(len.buffer).setUint32(0, hb.length, true);
+  rec.pending = { body: new Blob([len, hb].concat(blobs)), note: cap.stalled ? "the camera stopped delivering frames; saved what was recorded" : cap.ended ? "the camera was closed; saved what was recorded" : "" };
+  await uploadRecording();
+}
+
+async function uploadRecording() {
+  const p = rec.pending;
+  if (!p) return;
+  setRecState("saving");
+  if (p.body.size > maxUploadMb * 1048576) {
+    rec.pending = null;
+    setRecState("idle");
+    recMsg("The clip is " + (p.body.size / 1048576).toFixed(0) + " MB, over the server's limit of " + maxUploadMb + " MB (--max-upload-mb). Nothing saved.", "err");
+    return;
+  }
+  recMsg("saving " + (p.body.size / 1048576).toFixed(1) + " MB…");
+  let j = {}, code = 0;
+  try {
+    const r = await fetch("/api/record", { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: p.body });
+    code = r.status;
+    try { j = await r.json(); } catch (e) { /* not JSON */ }
+  } catch (e) {
+    setRecState("idle");
+    recMsg("The server did not answer; the clip is kept in this page. Start the server again and press Retry saving.", "err");
+    return;
+  }
+  if (code !== 200 || !j.ok) {
+    if (code >= 500 || !code) {
+      setRecState("idle");
+      recMsg("Saving failed: " + (j.msg || code) + ". Press Retry saving to try again.", "err");
+    } else {
+      rec.pending = null;
+      setRecState("idle");
+      recMsg("Not saved: " + (j.msg || code), "err");
+    }
+    return;
+  }
+  rec.pending = null;
+  setRecState("idle");
+  const warn = (j.warnings || []).concat(p.note ? [p.note] : []);
+  recMsg("Saved " + j.file + ": " + j.frames + " frames, " + j.duration_s.toFixed(1) + " s, " + j.fps.toFixed(1) + " frames/s, " + j.width + "×" + j.height + "." + (warn.length ? " Note: " + warn.join("; ") + "." : ""), warn.length ? "warn" : "");
+  loadRecordings();
+  loadClips(false);
+}
+
+async function loadRecordings() {
+  let j;
+  try { j = await (await fetch("/api/recordings")).json(); } catch (e) { return; }
+  const counts = j.counts || {};
+  const box = $("recCounts");
+  box.innerHTML = "";
+  for (const a of Object.keys(REC_LABEL)) {
+    const s = document.createElement("span");
+    s.className = "cnt" + (counts[a] ? "" : " zero");
+    s.textContent = REC_LABEL[a] + " " + (counts[a] || 0);
+    box.appendChild(s);
+  }
+  const list = $("recList");
+  list.innerHTML = "";
+  if (!j.recordings.length) return;
+  const t = document.createElement("table");
+  t.innerHTML = "<thead><tr><th>recorded</th><th>action</th><th>subject</th><th>length</th><th>frames/s</th><th>frames</th><th></th><th>notes</th></tr></thead>";
+  const tb = document.createElement("tbody");
+  for (const r of j.recordings) {
+    const tr = document.createElement("tr");
+    const cells = [(r.recorded_at || "").replace("T", " ").slice(0, 19), REC_LABEL[r.action] || r.action, r.subject,
+                   r.duration_s != null ? r.duration_s.toFixed(1) + " s" : "", r.fps != null ? r.fps.toFixed(1) : "", r.frames];
+    cells.forEach((v, k) => {
+      const td = document.createElement("td");
+      td.textContent = v;
+      if (k >= 3) td.className = "num";
+      tr.appendChild(td);
+    });
+    const tdb = document.createElement("td");
+    const play = document.createElement("button");
+    play.textContent = "Play";
+    play.title = "classify it with the current backend";
+    play.addEventListener("click", () => playPath(r.path));
+    const del = document.createElement("button");
+    del.textContent = "Delete";
+    del.title = "move to data/recordings/_trash/";
+    del.addEventListener("click", async () => {
+      if (!confirm("Move " + r.file + " to data/recordings/_trash/?")) return;
+      const d = await post("/api/recordings/delete", JSON.stringify({ path: r.path }));
+      if (!d.ok) recMsg("Not deleted: " + (d.msg || d.status), "err");
+      loadRecordings();
+      loadClips(false);
+    });
+    tdb.append(play, " ", del);
+    tr.appendChild(tdb);
+    const tdw = document.createElement("td");
+    tdw.className = "warn";
+    tdw.textContent = (r.warnings || []).join("; ");
+    tr.appendChild(tdw);
+    tb.appendChild(tr);
+  }
+  t.appendChild(tb);
+  list.appendChild(t);
+}
+
+$("recBtn").addEventListener("click", () => {
+  if (rec.state === "idle") recordClip();
+  else if (rec.state === "countdown" || rec.state === "recording") rec.stop = true;
+});
+$("recCamBtn").addEventListener("click", async () => {
+  if (rec.camera) closeRecCamera();
+  else if (await openRecCamera()) recMsg("");
+});
+$("recRetryBtn").addEventListener("click", uploadRecording);
+try { $("recSubject").value = localStorage.getItem("snnRecSubject") || ""; } catch (e) { /* storage blocked */ }
+
+window.addEventListener("beforeunload", (e) => {
+  if (rec.state === "recording" || rec.state === "saving" || rec.pending) { e.preventDefault(); e.returnValue = ""; }
+});
+
+window.addEventListener("pagehide", () => {
+  if (cam.on && navigator.sendBeacon) navigator.sendBeacon("/api/stop", "{}");   // release the board right away
+});
+
+resetView();
+setRecState("idle");
+loadRecordings();
+loadClips(false);
+connectSSE();
+</script>
+</body>
+</html>

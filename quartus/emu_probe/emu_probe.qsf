@@ -1,0 +1,17 @@
+# emu_probe.qsf -- synthesis-only probe of the event emulator (roadmap 4.10): resources + Fmax.
+# Not a bitstream for the board: all ports are virtual pins.
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CSXFC6D6F31C6
+set_global_assignment -name TOP_LEVEL_ENTITY emu_probe_top
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name NUM_PARALLEL_PROCESSORS 4
+
+set_global_assignment -name SYSTEMVERILOG_FILE emu_probe_top.sv
+set_global_assignment -name VERILOG_FILE ../../rtl/event_emulator.v
+set_global_assignment -name VERILOG_FILE ../../rtl/event_fifo.v
+set_global_assignment -name VERILOG_FILE ../../rtl/sdp_ram.v
+set_global_assignment -name VERILOG_FILE ../../rtl/log_lut.v
+set_global_assignment -name SDC_FILE emu_probe.sdc
+set_instance_assignment -name VIRTUAL_PIN ON -to *
+
+set_global_assignment -name LAST_QUARTUS_VERSION "21.1.0 Lite Edition"

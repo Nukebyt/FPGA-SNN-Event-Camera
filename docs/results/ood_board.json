@@ -1,0 +1,175 @@
+{
+ "backend": "board 192.168.137.200",
+ "rows": [
+  {
+   "clip": "KTH walking (reference)",
+   "note": "in distribution",
+   "weak_label": "walking",
+   "frames": 600,
+   "windows": 18,
+   "clip_answer": "walking",
+   "window_hist": {
+    "walking": 14,
+    "jogging": 3,
+    "running": 1
+   },
+   "weak_label_fraction": 0.7777777777777778,
+   "mean_events_pct": 2.2259012858072915,
+   "mismatching_frames": 0,
+   "seconds": 8.3
+  },
+  {
+   "clip": "KTH boxing (reference)",
+   "note": "in distribution",
+   "weak_label": "boxing",
+   "frames": 360,
+   "windows": 11,
+   "clip_answer": "boxing",
+   "window_hist": {
+    "boxing": 8,
+    "walking": 3
+   },
+   "weak_label_fraction": 0.7272727272727273,
+   "mean_events_pct": 2.469804551866319,
+   "mismatching_frames": 0,
+   "seconds": 5.1
+  },
+  {
+   "clip": "thermal park",
+   "note": "pedestrians on a path, side view, thermal",
+   "weak_label": "walking",
+   "frames": 600,
+   "windows": 18,
+   "clip_answer": "walking",
+   "window_hist": {
+    "running": 5,
+    "walking": 6,
+    "hand waving": 3,
+    "jogging": 4
+   },
+   "weak_label_fraction": 0.3333333333333333,
+   "mean_events_pct": 1.370025634765625,
+   "mismatching_frames": 0,
+   "seconds": 13.3
+  },
+  {
+   "clip": "thermal corridor",
+   "note": "people far away in a corridor, thermal",
+   "weak_label": "walking",
+   "frames": 900,
+   "windows": 28,
+   "clip_answer": "walking",
+   "window_hist": {
+    "walking": 17,
+    "boxing": 10,
+    "hand clapping": 1
+   },
+   "weak_label_fraction": 0.6071428571428571,
+   "mean_events_pct": 1.0662570529513888,
+   "mismatching_frames": 0,
+   "seconds": 18.0
+  },
+  {
+   "clip": "thermal lakeSide",
+   "note": "small distant people, thermal",
+   "weak_label": "walking",
+   "frames": 800,
+   "windows": 25,
+   "clip_answer": "walking",
+   "window_hist": {
+    "walking": 19,
+    "boxing": 2,
+    "hand waving": 4
+   },
+   "weak_label_fraction": 0.76,
+   "mean_events_pct": 0.10614013671875,
+   "mismatching_frames": 0,
+   "seconds": 16.1
+  },
+  {
+   "clip": "thermal library",
+   "note": "a person sitting down: none of the six actions",
+   "weak_label": null,
+   "frames": 900,
+   "windows": 28,
+   "clip_answer": "walking",
+   "window_hist": {
+    "walking": 22,
+    "running": 1,
+    "jogging": 2,
+    "hand waving": 3
+   },
+   "weak_label_fraction": null,
+   "mean_events_pct": 2.05084228515625,
+   "mismatching_frames": 0,
+   "seconds": 18.1
+  },
+  {
+   "clip": "thermal diningRoom",
+   "note": "a person moving about indoors",
+   "weak_label": null,
+   "frames": 800,
+   "windows": 25,
+   "clip_answer": "walking",
+   "window_hist": {
+    "walking": 24,
+    "hand clapping": 1
+   },
+   "weak_label_fraction": null,
+   "mean_events_pct": 2.802825927734375,
+   "mismatching_frames": 0,
+   "seconds": 15.9
+  },
+  {
+   "clip": "hand, fast (dark room)",
+   "note": "hand moving, 1080p, ISO 2000 noise",
+   "weak_label": null,
+   "frames": 220,
+   "windows": 6,
+   "clip_answer": "running",
+   "window_hist": {
+    "running": 6
+   },
+   "weak_label_fraction": null,
+   "mean_events_pct": 24.025795676491477,
+   "mismatching_frames": 0,
+   "seconds": 7.6
+  },
+  {
+   "clip": "hand, slow (dark room)",
+   "note": "hand moving slowly, ISO 2000 noise",
+   "weak_label": null,
+   "frames": 700,
+   "windows": 21,
+   "clip_answer": "running",
+   "window_hist": {
+    "hand clapping": 1,
+    "walking": 5,
+    "running": 11,
+    "jogging": 4
+   },
+   "weak_label_fraction": null,
+   "mean_events_pct": 13.412676130022321,
+   "mismatching_frames": 0,
+   "seconds": 23.0
+  },
+  {
+   "clip": "empty static scene (dark)",
+   "note": "nothing moves: only sensor noise",
+   "weak_label": null,
+   "frames": 400,
+   "windows": 12,
+   "clip_answer": "running",
+   "window_hist": {
+    "running": 7,
+    "walking": 5
+   },
+   "weak_label_fraction": null,
+   "mean_events_pct": 2.2662506103515625,
+   "mismatching_frames": 0,
+   "seconds": 12.4
+  }
+ ],
+ "frames": 6280,
+ "mismatching_frames": 0
+}

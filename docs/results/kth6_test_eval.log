@@ -1,0 +1,17 @@
+test: 862 samples, 3386 windows (T=32)   window accuracy 0.7271   sample accuracy 0.7993
+per class (window recall / sample recall):
+  walking       0.794 / 0.917  (n=144)
+  jogging       0.466 / 0.667  (n=144)
+  running       0.454 / 0.653  (n=144)
+  boxing        0.881 / 0.923  (n=143)
+  handwaving    0.810 / 0.875  (n=144)
+  handclapping  0.728 / 0.762  (n=143)
+per condition (window / sample): d1 0.809 / 0.883  d2 0.579 / 0.611  d3 0.766 / 0.829  d4 0.785 / 0.875
+sample confusion (rows = true, columns = predicted; order walking, jogging, running, boxing, handwaving, handclapping):
+[[132  12   0   0   0   0]
+ [ 31  96  17   0   0   0]
+ [  8  42  94   0   0   0]
+ [  8   1   0 132   2   0]
+ [  4   2   4   0 126   8]
+ [ 10   0   2  21   1 109]]
+integer model vs GPU evaluation on 100 samples: 0 prediction differences

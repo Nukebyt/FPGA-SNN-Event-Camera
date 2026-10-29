@@ -1,0 +1,42 @@
+# snn_demo.qsf -- DE10-Standard: frames -> event emulator -> bins -> integer SNN (roadmap Phase 5/6); see rtl/snn_demo_top.v
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CSXFC6D6F31C6
+set_global_assignment -name TOP_LEVEL_ENTITY snn_demo_top
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 21.1
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name NUM_PARALLEL_PROCESSORS 4
+
+set_global_assignment -name VERILOG_FILE ../../rtl/snn_demo_top.v
+set_global_assignment -name VERILOG_FILE ../../rtl/snn_core.v
+set_global_assignment -name VERILOG_FILE ../../rtl/lif_conv.v
+set_global_assignment -name VERILOG_FILE ../../rtl/snn_ctrl.v
+set_global_assignment -name VERILOG_FILE ../../rtl/bin_builder.v
+set_global_assignment -name VERILOG_FILE ../../rtl/clip_replay.v
+set_global_assignment -name VERILOG_FILE ../../rtl/frame_sync.v
+set_global_assignment -name VERILOG_FILE ../../rtl/pix_source.v
+set_global_assignment -name VERILOG_FILE ../../rtl/event_view.v
+set_global_assignment -name VERILOG_FILE ../../rtl/event_emulator.v
+set_global_assignment -name VERILOG_FILE ../../rtl/event_fifo.v
+set_global_assignment -name VERILOG_FILE ../../rtl/sdp_ram.v
+set_global_assignment -name VERILOG_FILE ../../rtl/log_lut.v
+set_global_assignment -name VERILOG_FILE ../../rtl/vga_timing.v
+set_global_assignment -name VERILOG_FILE ../../rtl/reset_sync.v
+set_global_assignment -name VERILOG_FILE ../../rtl/hex7seg.v
+set_global_assignment -name VERILOG_FILE ip/pll25/pll25.v
+set_global_assignment -name QIP_FILE ip/pll25/pll25.qip
+set_global_assignment -name SDC_FILE snn_demo.sdc
+
+# ROM images (paths are relative to this project directory)
+set_parameter -name LUT_FILE "../../rtl/log_lut.hex"
+set_parameter -name W1FILE "../../rtl/weights/kth6/w1.hex"
+set_parameter -name W2FILE "../../rtl/weights/kth6/w2.hex"
+set_parameter -name WFFILE "../../rtl/weights/kth6/wfc.hex"
+set_parameter -name CLIPFILE "../../rtl/weights/kth6/clips.hex"
+set_parameter -name LBLFILE "../../rtl/weights/kth6/labels.hex"
+
+# Pin locations and IO standards (same as the demo project)
+set_global_assignment -name SOURCE_TCL_SCRIPT_FILE ../pins/de10_pins.tcl
+
+set_global_assignment -name RESERVE_ALL_UNUSED_PINS_WEAK_PULLUP "AS INPUT TRI-STATED WITH WEAK PULL-UP"
+
+set_global_assignment -name LAST_QUARTUS_VERSION "21.1.0 Lite Edition"
